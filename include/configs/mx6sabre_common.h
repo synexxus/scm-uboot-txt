@@ -73,7 +73,7 @@
 #define CONFIG_DOS_PARTITION
 
 #define CONFIG_SUPPORT_EMMC_BOOT /* eMMC specific */
-
+/*
 #define CONFIG_CMD_PING
 #define CONFIG_CMD_DHCP
 #define CONFIG_CMD_MII
@@ -87,7 +87,7 @@
 
 #define CONFIG_PHYLIB
 #define CONFIG_PHY_ATHEROS
-
+*/
 /* allow to overwrite serial and ethaddr */
 #define CONFIG_ENV_OVERWRITE
 #define CONFIG_CONS_INDEX              1
@@ -197,7 +197,6 @@
 	"mmcdev=" __stringify(CONFIG_SYS_MMC_ENV_DEV) "\0" \
 	"mmcpart=" __stringify(CONFIG_SYS_MMC_IMG_LOAD_PART) "\0" \
 	"mmcroot=" CONFIG_MMCROOT " rootwait rw\0" \
-	"dmfc=" CONFIG_DMFC "\0" \
 	"mmcautodetect=yes\0" \
 	"update_sd_firmware=" \
 		"if test ${ip_dyn} = yes; then " \
@@ -215,7 +214,7 @@
 	EMMC_ENV	  \
 	"smp=" CONFIG_SYS_NOSMP "\0"\
 	"mmcargs=setenv bootargs console=${console},${baudrate} ${smp} " \
-		"root=${mmcroot} ${dmfc} \0" \
+		"root=${mmcroot}\0" \
 	"loadbootscript=" \
 		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
 	"bootscript=echo Running bootscript from mmc ...; " \

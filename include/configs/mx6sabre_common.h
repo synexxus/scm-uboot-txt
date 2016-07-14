@@ -266,7 +266,7 @@
 	"if run loadimage; then " \
 		"run mmcboot; " \
 	"else run netboot; " \
-	"fi;\0"
+	"fi;"
 #endif
 
 #define CONFIG_ARP_TIMEOUT     200UL

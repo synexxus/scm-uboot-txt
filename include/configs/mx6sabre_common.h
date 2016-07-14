@@ -101,7 +101,7 @@
 #define CONFIG_CMD_SETEXPR
 #undef CONFIG_CMD_IMLS
 
-#define CONFIG_BOOTDELAY               1
+#define CONFIG_BOOTDELAY               5
 
 #define CONFIG_LOADADDR                        0x12000000
 #define CONFIG_SYS_TEXT_BASE           0x17800000
@@ -190,7 +190,7 @@
 	"fdt_file=" CONFIG_DEFAULT_FDT_FILE "\0" \
 	"fdt_addr=0x18000000\0" \
 	"boot_fdt=try\0" \
-	"ip_dyn=yes\0" \
+	"ip_dyn=no\0" \
 	"console=" CONFIG_CONSOLE_DEV "\0" \
 	"fdt_high=0xffffffff\0"	  \
 	"initrd_high=0xffffffff\0" \
@@ -236,9 +236,15 @@
 		"else " \
 			"bootz; " \
 		"fi;\0" \
+	"serverip=192.168.234.2\0" \
+	"nfsip=192.168.234.2\0" \
+        "nfsexport=/nfs/rootfs\0" \
+        "ipaddr=192.168.234.3\0" \
+	"ethaddr=02:11:22:33:44:55\0" \
 	"netargs=setenv bootargs console=${console},${baudrate} ${smp} " \
 		"root=/dev/nfs " \
-		"ip=dhcp nfsroot=${serverip}:${nfsroot},v3,tcp\0" \
+		"ip=${ipaddr} nfsroot=${nfsip}:${nfsexport} " \
+		"nfsrootdebug consoleblank=0 rootwait \0" \
 	"netboot=echo Booting from net ...; " \
 		"run netargs; " \
 		"if test ${ip_dyn} = yes; then " \
@@ -246,20 +252,9 @@
 		"else " \
 			"setenv get_cmd tftp; " \
 		"fi; " \
-		"${get_cmd} ${image}; " \
-		"if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
-			"if ${get_cmd} ${fdt_addr} ${fdt_file}; then " \
-				"bootz ${loadaddr} - ${fdt_addr}; " \
-			"else " \
-				"if test ${boot_fdt} = try; then " \
-					"bootz; " \
-				"else " \
-					"echo WARN: Cannot load the DT; " \
-				"fi; " \
-			"fi; " \
-		"else " \
-			"bootz; " \
-		"fi;\0"
+		"${get_cmd} ${loadaddr} ${serverip}:${image}; " \
+		"${get_cmd} ${fdt_addr} ${serverip}:${fdt_file}; " \
+		"bootz ${loadaddr} - ${fdt_addr};\0"
 
 #define CONFIG_BOOTCOMMAND \
 	"mmc dev ${mmcdev};" \

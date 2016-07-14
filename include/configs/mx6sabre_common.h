@@ -244,7 +244,7 @@
 	"netargs=setenv bootargs console=${console},${baudrate} ${smp} " \
 		"root=/dev/nfs " \
 		"ip=${ipaddr} nfsroot=${nfsip}:${nfsexport} " \
-		"nfsrootdebug consoleblank=0 rootwait \0" \
+		"nfsrootdebug consoleblank=0 rootwait rw\0" \
 	"netboot=echo Booting from net ...; " \
 		"run netargs; " \
 		"if test ${ip_dyn} = yes; then " \

@@ -80,6 +80,14 @@ DECLARE_GLOBAL_DATA_PTR;
 	PAD_CTL_PUS_47K_UP  | PAD_CTL_SPEED_LOW |		\
 	PAD_CTL_DSE_80ohm   | PAD_CTL_SRE_FAST  | PAD_CTL_HYS)
 
+#define SSM_PWR_ON_PAD_CTRL (PAD_CTL_HYS | PAD_CTL_PUS_100K_UP | \
+	PAD_CTL_PUE | PAD_CTL_PKE | PAD_CTL_SPEED_LOW   |     \
+	PAD_CTL_DSE_120ohm   | PAD_CTL_SRE_SLOW)
+
+#define SSM_PWR_OFF_PAD_CTRL (PAD_CTL_HYS | PAD_CTL_PUS_100K_DOWN | \
+        PAD_CTL_PUE | PAD_CTL_PKE | PAD_CTL_SPEED_LOW   |     \
+        PAD_CTL_DSE_120ohm   | PAD_CTL_SRE_SLOW)
+
 
 #define I2C_PMIC	1
 
@@ -236,10 +244,10 @@ static iomux_v3_cfg_t const rgb_pads[] = {
 	//MX6_PAD_DISP0_DAT4__IPU1_DISP0_DATA04 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	MX6_PAD_DISP0_DAT5__IPU1_DISP0_DATA05 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	MX6_PAD_DISP0_DAT6__IPU1_DISP0_DATA06 | MUX_PAD_CTRL(NO_PAD_CTRL),
-	MX6_PAD_DISP0_DAT7__IPU1_DISP0_DATA07 | MUX_PAD_CTRL(NO_PAD_CTRL),
-	MX6_PAD_DISP0_DAT8__IPU1_DISP0_DATA08 | MUX_PAD_CTRL(NO_PAD_CTRL),
+	//ITP 4G MX6_PAD_DISP0_DAT7__IPU1_DISP0_DATA07 | MUX_PAD_CTRL(NO_PAD_CTRL),
+	//ITP RADAR MX6_PAD_DISP0_DAT8__IPU1_DISP0_DATA08 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	//MX6_PAD_DISP0_DAT9__IPU1_DISP0_DATA09 | MUX_PAD_CTRL(NO_PAD_CTRL),
-	MX6_PAD_DISP0_DAT10__IPU1_DISP0_DATA10 | MUX_PAD_CTRL(NO_PAD_CTRL),
+	//ITP SAT MX6_PAD_DISP0_DAT10__IPU1_DISP0_DATA10 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	MX6_PAD_DISP0_DAT11__IPU1_DISP0_DATA11 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	MX6_PAD_DISP0_DAT12__IPU1_DISP0_DATA12 | MUX_PAD_CTRL(NO_PAD_CTRL),
 	MX6_PAD_DISP0_DAT13__IPU1_DISP0_DATA13 | MUX_PAD_CTRL(NO_PAD_CTRL),
@@ -365,6 +373,29 @@ static void setup_iomux_cam_leds(void)
 	gpio_set_value(CAM_0_LED, 0); 
  	gpio_set_value(CAM_1_LED, 0); 
  	gpio_set_value(CAM_2_LED, 0); 
+}
+
+#define SSM_PWR_4G		IMX_GPIO_NR(4, 28)
+#define SSM_PWR_RADAR		IMX_GPIO_NR(4, 29)
+#define SSM_PWR_IRIDIUM		IMX_GPIO_NR(4, 31)
+
+static iomux_v3_cfg_t const ssm_pwr_pads[] = {
+        MX6_PAD_DISP0_DAT7__GPIO4_IO28  | MUX_PAD_CTRL(SSM_PWR_OFF_PAD_CTRL),
+        MX6_PAD_DISP0_DAT8__GPIO4_IO29  | MUX_PAD_CTRL(SSM_PWR_OFF_PAD_CTRL),
+        MX6_PAD_DISP0_DAT10__GPIO4_IO31  | MUX_PAD_CTRL(SSM_PWR_OFF_PAD_CTRL),
+};
+
+static void setup_iomux_pwr_pins(void)
+{
+        imx_iomux_v3_setup_multiple_pads(ssm_pwr_pads, ARRAY_SIZE(ssm_pwr_pads));
+
+        /* If the pin settings do not work correctly, uncomment out below and
+        use functions. If still having problems, change SSM_PWR_OFF_PAD_CTRL to
+        NO_PAD_CTRL for ssm_pwr_pad array setup.*/
+
+        /*gpio_direction_output(SSM_PWR_4G, 0);
+        gpio_direction_output(SSM_PWR_RADAR, 0);
+        gpio_direction_output(SSM_PWR_IRIDIUM, 0);*/
 }
 
 static void setup_iomux_uart(void)
@@ -1101,6 +1132,7 @@ int board_init(void)
 #endif
 
 	setup_iomux_cam_leds();
+	setup_iomux_pwr_pins();
 
 	return 0;
 }
